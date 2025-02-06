@@ -2,9 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:whatsapp_ui/colors.dart';
 import 'package:whatsapp_ui/widgets/info.dart';
 
-class ContactList extends StatelessWidget {
+class ContactList extends StatefulWidget {
   const ContactList({super.key});
 
+  @override
+  State<ContactList> createState() => _ContactListState();
+}
+
+class _ContactListState extends State<ContactList> {
+   List<Map<String,dynamic>> _allUsers=info;
+
+  List<Map<String,dynamic>> _foundUsers=[];
+  @override
+  void initState() {
+    _foundUsers=_allUsers;
+    super.initState();
+  }
+  void _runFilter(String eneteredKeyword){
+    List<Map<String,dynamic>> _results=[];
+    if (eneteredKeyword.isEmpty){
+      _results=_allUsers;
+    }
+    else{
+      _results=_allUsers
+      .where((info)=>info["name"].toLowerCase().contains(eneteredKeyword.toLowerCase())).toList();
+    }
+    setState(() { _foundUsers = _results; });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -13,6 +38,7 @@ class ContactList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: TextField(
+            onChanged: (value) => _runFilter(value),
             decoration: InputDecoration(
               hintText: 'Ask Beta AI or Search',
               hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
@@ -35,7 +61,7 @@ class ContactList extends StatelessWidget {
 
         Flexible(
           child: ListView.builder(
-            itemCount: info.length,
+            itemCount: _foundUsers.length,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -47,11 +73,11 @@ class ContactList extends StatelessWidget {
                         dense: true, 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
                         title: Text(
-                          info[index]['name'].toString(),
+                          _foundUsers[index]['name'].toString(),
                           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500), 
                         ),
                         subtitle: Text(
-                          info[index]['message'].toString(),
+                          _foundUsers[index]['message'].toString(),
                           style: const TextStyle(fontSize: 14, color: Colors.grey), 
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -59,10 +85,10 @@ class ContactList extends StatelessWidget {
                         leading: CircleAvatar(
                           radius: 25, // Smaller avatar
                           backgroundColor: Colors.grey,
-                          backgroundImage: NetworkImage(info[index]['profilePic'].toString()),
+                          backgroundImage: NetworkImage(_foundUsers[index]['profilePic'].toString()),
                         ),
                         trailing: Text(
-                          info[index]['time'].toString(),
+                          _foundUsers[index]['time'].toString(),
                           style: const TextStyle(color: Colors.grey, fontSize: 13), 
                         ),
                       ),
