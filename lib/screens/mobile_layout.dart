@@ -10,7 +10,7 @@ class MobileLayout extends StatefulWidget {
 }
 
 class _MobileLayoutState extends State<MobileLayout> {
-   int _currentIndex = 0; // Track selected index
+   int _currentIndex = 0;
 
   final List<Widget> _screens = [
     const ContactList(),

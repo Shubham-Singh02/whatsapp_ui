@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:whatsapp_ui/colors.dart';
-import 'package:whatsapp_ui/widgets/info.dart';
+import 'package:whatsapp_ui/screens/mobile_chat_screen.dart';
+import 'package:whatsapp_ui/info.dart';
 
 class ContactList extends StatefulWidget {
   const ContactList({super.key});
@@ -10,7 +11,7 @@ class ContactList extends StatefulWidget {
 }
 
 class _ContactListState extends State<ContactList> {
-   List<Map<String,dynamic>> _allUsers=info;
+  final List<Map<String,dynamic>> _allUsers=info;
 
   List<Map<String,dynamic>> _foundUsers=[];
   @override
@@ -19,15 +20,15 @@ class _ContactListState extends State<ContactList> {
     super.initState();
   }
   void _runFilter(String eneteredKeyword){
-    List<Map<String,dynamic>> _results=[];
+    List<Map<String,dynamic>> results=[];
     if (eneteredKeyword.isEmpty){
-      _results=_allUsers;
+      results=_allUsers;
     }
     else{
-      _results=_allUsers
+      results=_allUsers
       .where((info)=>info["name"].toLowerCase().contains(eneteredKeyword.toLowerCase())).toList();
     }
-    setState(() { _foundUsers = _results; });
+    setState(() { _foundUsers = results; });
   }
   
   @override
@@ -53,7 +54,7 @@ class _ContactListState extends State<ContactList> {
                 borderRadius: BorderRadius.circular(25.0),
                 borderSide: const BorderSide(color: searchBarColor),
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 10), // Compact search bar
+              contentPadding: const EdgeInsets.symmetric(vertical: 10), 
             ),
           ),
         ),
@@ -63,12 +64,21 @@ class _ContactListState extends State<ContactList> {
           child: ListView.builder(
             itemCount: _foundUsers.length,
             itemBuilder: (context, index) {
-              return Column(
+              
+             return Column(
+              
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    return MobileChatScreen(
+                      index: index,
+                      image: NetworkImage(info[index]['profilePic'].toString()),
+                    );
+                  },));
+                    },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0), // Reduce padding
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0), 
                       child: ListTile(
                         dense: true, 
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
@@ -83,7 +93,7 @@ class _ContactListState extends State<ContactList> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         leading: CircleAvatar(
-                          radius: 25, // Smaller avatar
+                          radius: 25, 
                           backgroundColor: Colors.grey,
                           backgroundImage: NetworkImage(_foundUsers[index]['profilePic'].toString()),
                         ),
